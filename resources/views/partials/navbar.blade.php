@@ -1,3 +1,4 @@
+<style></style>
 <nav class="navbar navbar-expand-lg bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand text-primary fw-bold" href="{{ route('home') }}">CompanyJob</a>
@@ -10,7 +11,7 @@
                     <a class="nav-link text-dark" href="{{ route('about') }}">About Us</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="{{ route('jobs.index') }}">Jobs</a> <!-- Menu Jobs -->
+                    <a class="nav-link text-dark" >Jobs</a> 
                 </li>
 
                 @auth

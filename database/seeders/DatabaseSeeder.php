@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(2)->create(['role' => 'hrd']);
         User::factory(5)->create(['role' => 'user']);
-        Job::factory(10)->create();
+        Job::factory()->count(10)->create(); // Buat 10 data dummy
+
     }
     
 }

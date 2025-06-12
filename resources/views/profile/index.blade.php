@@ -8,23 +8,39 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
+         body {
             background: #f8f9fa;
+        }
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 10px 20px;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #000;
+        }
+        .nav-link {
+            color: #000;
+            margin-left: 15px;
+        }
+        .nav-link:hover {
+            color: #0d6efd;
         }
         .profile-container {
             display: flex;
             gap: 20px;
-            margin-top: 50px;
+            margin: 50px auto;
+            max-width: 1200px;
         }
         .profile-card {
-            background: white;
+            background: #fff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
         .sidebar {
             width: 280px;
-            padding: 20px;
         }
         .sidebar a {
             display: flex;
@@ -38,18 +54,79 @@
         }
         .sidebar a:hover, .sidebar a.active {
             background-color: #0d6efd;
-            color: white;
+            color: #fff;
         }
         .profile-picture {
             text-align: center;
             margin-bottom: 20px;
         }
         .profile-picture img {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid #0d6efd;
+        }
+        .sidebar .user-name {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        .main-content {
+            flex-grow: 1;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .main-content h3 {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .document-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .document-section label {
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .document-section .help-text {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        .document-section small {
+            color: #6c757d;
+            margin-left: 10px;
+        }
+        .btn-choose, .btn-change {
+            background-color: #0d6efd;
+            color: #fff;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-change {
+            background-color: #6c757d;
+        }
+        .btn-choose:hover, .btn-change:hover {
+            opacity: 0.9;
+        }
+        .btn-submit {
+            background-color: #0d6efd;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        .btn-submit:hover {
+            background-color: #0d6efd;
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -57,23 +134,7 @@
     @include('partials.navbar')
     <div class="container profile-container">
         <!-- Sidebar -->
-        <div class="profile-card sidebar">
-            <div class="profile-picture">
-                <img src="{{ asset('images/default-avatar.png') }}" alt="User Avatar" onerror="this.src='https://via.placeholder.com/100'">
-                <h5 class="mt-2">{{ auth()->user()->name }}</h5>
-            </div>
-            <a href="#" class="active"><i class="fas fa-user"></i> Profile</a>
-            <a href="#"><i class="fas fa-file-alt"></i> Fill Document</a>
-            <a href="#"><i class="fas fa-history"></i> History</a>
-            <a href="#"><i class="fas fa-lock"></i> Change Password</a>
-            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                @csrf
-            </form>
-        </div>
-
+        @include ('partials.sidebar-profile')
         <!-- Profile Details -->
         <div class="profile-card flex-grow-1">
         <div class="profile-info">

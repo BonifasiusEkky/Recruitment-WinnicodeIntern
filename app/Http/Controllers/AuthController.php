@@ -81,7 +81,8 @@ class AuthController extends Controller
         }
 
         // Login user dengan remember me
-        Auth::login($user, $request->remember);
+        Auth::login($user, $request->boolean('remember'));
+
 
         // Redirect berdasarkan role
         if ($user->role === 'hrd') {

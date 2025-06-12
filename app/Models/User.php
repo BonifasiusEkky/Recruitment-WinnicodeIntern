@@ -22,4 +22,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profile::class, 'user_id', 'id');
     }
+    public function document()
+{
+    return $this->hasOne(Document::class);
+}
 }
