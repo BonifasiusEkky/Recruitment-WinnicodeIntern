@@ -11,7 +11,7 @@
                     <a class="nav-link text-dark" href="{{ route('about') }}">About Us</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" >Jobs</a> 
+                    <a class="nav-link text-dark" href="{{ route('jobs.index') }}" >Jobs</a> 
                 </li>
 
                 @auth
@@ -21,7 +21,7 @@
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
-                            <button type="submit" class="btn btn-danger btn-sm nav-link border-0">Logout</button>
+                            <button type="submit" class="btn btn-sm nav-link border-0">Logout</button>
                         </form>
                     </li>
                 @else

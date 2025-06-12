@@ -130,6 +130,13 @@
             background-color: #0d6efd;
             opacity: 0.9;
         }
+        .document-link {
+            color: #0d6efd;
+            text-decoration: none;
+        }
+        .document-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -137,7 +144,9 @@
 
     <div class="container profile-container">
         <!-- Sidebar -->
-        @include('partials.sidebar-profile')
+        <div class="sidebar">
+            @include('partials.sidebar-profile')
+        </div>
 
         <!-- Main Content -->
         <div class="main-content">
@@ -158,17 +167,22 @@
                         {{ session('success') }}
                     </div>
                 @endif
+                @if (session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
 
                 <!-- Curriculum Vitae -->
                 <div class="document-section">
                     <label>Curriculum Vitae (Required)</label>
                     <div class="help-text">Upload your CV in PDF format with a maximum size of 2MB</div>
-                    @php
-                        $document = auth()->user()->document;
-                        $cvExists = $document && $document->curriculum_vitae;
-                    @endphp
-                    @if ($cvExists)
-                        <small id="cvStatus">{{ basename($document->curriculum_vitae) }}</small>
+                    @if ($user->document && $user->document->curriculum_vitae)
+                        <small id="cvStatus">
+                            <a href="{{ asset('storage/' . $user->document->curriculum_vitae) }}" class="document-link" target="_blank">
+                                {{ basename($user->document->curriculum_vitae) }}
+                            </a>
+                        </small>
                         <input type="file" name="curriculum_vitae" class="form-control-file d-none" id="cvInput" accept=".pdf">
                         <button type="button" class="btn-change" id="cvChange" onclick="document.getElementById('cvInput').click()">Change File</button>
                     @else
@@ -177,17 +191,21 @@
                         <button type="button" class="btn-choose" onclick="document.getElementById('cvInput').click()">Choose File</button>
                         <button type="button" class="btn-change d-none" id="cvChange" onclick="document.getElementById('cvInput').click()">Change File</button>
                     @endif
+                    @error('curriculum_vitae')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- Transcript -->
                 <div class="document-section">
                     <label>Transcript (Required)</label>
                     <div class="help-text">Upload your transcript in PDF format with a maximum size of 2MB</div>
-                    @php
-                        $transcriptExists = $document && $document->transcript;
-                    @endphp
-                    @if ($transcriptExists)
-                        <small id="transcriptStatus">{{ basename($document->transcript) }}</small>
+                    @if ($user->document && $user->document->transcript)
+                        <small id="transcriptStatus">
+                            <a href="{{ asset('storage/' . $user->document->transcript) }}" class="document-link" target="_blank">
+                                {{ basename($user->document->transcript) }}
+                            </a>
+                        </small>
                         <input type="file" name="transcript" class="form-control-file d-none" id="transcriptInput" accept=".pdf">
                         <button type="button" class="btn-change" id="transcriptChange" onclick="document.getElementById('transcriptInput').click()">Change File</button>
                     @else
@@ -196,17 +214,21 @@
                         <button type="button" class="btn-choose" onclick="document.getElementById('transcriptInput').click()">Choose File</button>
                         <button type="button" class="btn-change d-none" id="transcriptChange" onclick="document.getElementById('transcriptInput').click()">Change File</button>
                     @endif
+                    @error('transcript')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- ID Card -->
                 <div class="document-section">
                     <label>ID Card (Required)</label>
                     <div class="help-text">Upload your ID card photo in PDF format with a maximum size of 2MB</div>
-                    @php
-                        $idCardExists = $document && $document->id_card;
-                    @endphp
-                    @if ($idCardExists)
-                        <small id="idCardStatus">{{ basename($document->id_card) }}</small>
+                    @if ($user->document && $user->document->id_card)
+                        <small id="idCardStatus">
+                            <a href="{{ asset('storage/' . $user->document->id_card) }}" class="document-link" target="_blank">
+                                {{ basename($user->document->id_card) }}
+                            </a>
+                        </small>
                         <input type="file" name="id_card" class="form-control-file d-none" id="idCardInput" accept=".pdf">
                         <button type="button" class="btn-change" id="idCardChange" onclick="document.getElementById('idCardInput').click()">Change File</button>
                     @else
@@ -215,17 +237,21 @@
                         <button type="button" class="btn-choose" onclick="document.getElementById('idCardInput').click()">Choose File</button>
                         <button type="button" class="btn-change d-none" id="idCardChange" onclick="document.getElementById('idCardInput').click()">Change File</button>
                     @endif
+                    @error('id_card')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- Certificate -->
                 <div class="document-section">
                     <label>Certificate of Organizational Experience (Optional)</label>
                     <div class="help-text">Upload your certificate with a maximum size of 5MB</div>
-                    @php
-                        $certificateExists = $document && $document->certificate;
-                    @endphp
-                    @if ($certificateExists)
-                        <small id="certificateStatus">{{ basename($document->certificate) }}</small>
+                    @if ($user->document && $user->document->certificate)
+                        <small id="certificateStatus">
+                            <a href="{{ asset('storage/' . $user->document->certificate) }}" class="document-link" target="_blank">
+                                {{ basename($user->document->certificate) }}
+                            </a>
+                        </small>
                         <input type="file" name="certificate" class="form-control-file d-none" id="certificateInput" accept=".pdf">
                         <button type="button" class="btn-change" id="certificateChange" onclick="document.getElementById('certificateInput').click()">Change File</button>
                     @else
@@ -234,6 +260,9 @@
                         <button type="button" class="btn-choose" onclick="document.getElementById('certificateInput').click()">Choose File</button>
                         <button type="button" class="btn-change d-none" id="certificateChange" onclick="document.getElementById('certificateInput').click()">Change File</button>
                     @endif
+                    @error('certificate')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <button type="submit" class="btn-submit">Submit</button>
@@ -248,18 +277,18 @@
             const input = document.getElementById(inputId);
             const status = document.getElementById(statusId);
             const changeBtn = document.getElementById(changeBtnId);
-            const chooseBtn = input.previousElementSibling.previousElementSibling; // Tombol "Choose File"
+            const chooseBtn = input.previousElementSibling; // Tombol "Choose File"
 
             input.addEventListener('change', function() {
                 if (input.files.length > 0) {
                     const file = input.files[0];
                     const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2); // Ubah ke MB dengan 2 desimal
-                    status.textContent = `${file.name} (${fileSizeMB} MB)`;
+                    status.innerHTML = `${file.name} (${fileSizeMB} MB)`;
                     status.classList.remove('text-danger');
                     chooseBtn.classList.add('d-none');
                     changeBtn.classList.remove('d-none');
                 } else {
-                    status.textContent = 'No file chosen';
+                    status.innerHTML = 'No file chosen';
                     chooseBtn.classList.remove('d-none');
                     changeBtn.classList.add('d-none');
                 }

@@ -23,8 +23,10 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         
     ];
+    
     protected $routeMiddleware = [
-        'is_hrd' => \App\Http\Middleware\IsHRD::class,
+     
+        'hrd' => \App\Http\Middleware\HrdMiddleware::class,
     ];
     
 

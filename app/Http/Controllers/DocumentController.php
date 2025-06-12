@@ -5,60 +5,84 @@ namespace App\Http\Controllers;
 use App\Models\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class DocumentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    public function fillDoc()
+    {
+        /** @var \App\Models\User $user */
+    $user = auth()->user();
+    $user->load('document');
+    if (!$user->profile) {
+        return redirect()->route('profile.edit')->with('error', 'Please complete your profile before uploading documents.');
+    }
+    return view('profile.fill-doc', compact('user'));
+    }
+
     public function storeDoc(Request $request)
     {
-        // Validasi file jika ada yang diunggah
-        $request->validate([
-            'curriculum_vitae' => 'nullable|file|mimes:pdf|max:2048', // 2MB, tidak wajib
-            'transcript' => 'nullable|file|mimes:pdf|max:2048', // 2MB, tidak wajib
-            'id_card' => 'nullable|file|mimes:pdf|max:2048', // 2MB, tidak wajib
-            'certificate' => 'nullable|file|mimes:pdf|max:5120', // 5MB, opsional
-        ]);
+        try {
+            // Flag untuk mengecek apakah dokumen sudah ada
+            $documentExists = !!auth()->user()->document;
 
-        // Ambil atau buat dokumen baru untuk pengguna
-        $document = auth()->user()->document ?: new Document();
-        $document->user_id = auth()->id();
+            // Validasi file
+            $request->validate([
+                'curriculum_vitae' => 'required_if:document_exists,' . ($documentExists ? 'true' : 'false') . '|file|mimes:pdf|max:2048',
+                'transcript' => 'required_if:document_exists,' . ($documentExists ? 'true' : 'false') . '|file|mimes:pdf|max:2048',
+                'id_card' => 'required_if:document_exists,' . ($documentExists ? 'true' : 'false') . '|file|mimes:pdf|max:2048',
+                'certificate' => 'nullable|file|mimes:pdf|max:5120',
+            ], [
+                'curriculum_vitae.required_if' => 'Curriculum Vitae is required.',
+                'transcript.required_if' => 'Transcript is required.',
+                'id_card.required_if' => 'ID Card is required.',
+            ]);
 
-        // Proses setiap file yang diunggah
-        if ($request->hasFile('curriculum_vitae')) {
-            // Hapus file lama jika ada
-            if ($document->curriculum_vitae) {
-                Storage::disk('public')->delete($document->curriculum_vitae);
+            // Ambil atau buat dokumen baru untuk pengguna
+            $document = auth()->user()->document ?: new Document();
+            $document->user_id = auth()->id();
+
+            // Mapping field ke folder penyimpanan
+            $fieldFolders = [
+                'curriculum_vitae' => 'documents/cv',
+                'transcript' => 'documents/transcript',
+                'id_card' => 'documents/id_card',
+                'certificate' => 'documents/certificate',
+            ];
+
+            // Proses setiap file yang diunggah
+            foreach (['curriculum_vitae', 'transcript', 'id_card', 'certificate'] as $field) {
+                if ($request->hasFile($field)) {
+                    // Buat folder jika belum ada
+                    Storage::disk('public')->makeDirectory($fieldFolders[$field]);
+
+                    // Simpan file baru
+                    $path = $request->file($field)->store($fieldFolders[$field], 'public');
+
+                    // Hapus file lama jika ada
+                    if ($document->$field) {
+                        Storage::disk('public')->delete($document->$field);
+                    }
+
+                    // Simpan path file ke dokumen
+                    $document->$field = $path;
+
+                    Log::info("Uploaded $field:", ['path' => $path]);
+                }
             }
-            $path = $request->file('curriculum_vitae')->store('documents', 'public');
-            $document->curriculum_vitae = $path;
+
+            // Simpan dokumen ke database
+            $document->save();
+
+            return redirect()->route('profile.fill-doc')->with('success', 'Documents uploaded successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error uploading documents:', ['error' => $e->getMessage()]);
+            return redirect()->route('profile.fill-doc')->with('error', 'Failed to upload documents: ' . $e->getMessage());
         }
-
-        if ($request->hasFile('transcript')) {
-            if ($document->transcript) {
-                Storage::disk('public')->delete($document->transcript);
-            }
-            $path = $request->file('transcript')->store('documents', 'public');
-            $document->transcript = $path;
-        }
-
-        if ($request->hasFile('id_card')) {
-            if ($document->id_card) {
-                Storage::disk('public')->delete($document->id_card);
-            }
-            $path = $request->file('id_card')->store('documents', 'public');
-            $document->id_card = $path;
-        }
-
-        if ($request->hasFile('certificate')) {
-            if ($document->certificate) {
-                Storage::disk('public')->delete($document->certificate);
-            }
-            $path = $request->file('certificate')->store('documents', 'public');
-            $document->certificate = $path;
-        }
-
-        // Simpan dokumen ke database
-        $document->save();
-
-        return redirect()->back()->with('success', 'Documents uploaded successfully!');
     }
 }

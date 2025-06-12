@@ -16,7 +16,7 @@
             <div class="hero-overlay"></div>
             <div class="container text-center hero-content">
                 <h1 class="fw-bold">Find The Perfect Job That You Deserved</h1>
-                <p>You can search your job, your passion blablablablabla blablablablabla</p>
+                <p>You can search your job, your passion, and build the future you’ve always dreamed of.</p>
                 <a href="{{ route('login') }}" class="btn btn-primary px-4">Explore Job</a>
             </div>
         </div>

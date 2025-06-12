@@ -4,54 +4,78 @@ namespace App\Http\Controllers;
 
 use App\Models\Job;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class JobController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('jobs.index');
+        $type = $request->query('type');
+        Log::info('Filter type applied:', ['type' => $type]);
+        $query = Job::query();
+        if ($type && in_array($type, ['full_time', 'part_time'])) {
+            $query->where('tipe_pekerjaan', $type);
+        }
+        $jobs = $query->get();
+        Log::info('Jobs retrieved:', ['jobs' => $jobs->toArray()]);
+        return view('jobs.index', compact('jobs', 'type'));
+    }
+
+    public function show(Job $job)
+    {
+        Log::info('Job retrieved for show:', ['job' => $job->toArray()]);
+        return view('jobs.show', compact('job'));
     }
 
     public function store(Request $request)
     {
         $this->authorize('create', Job::class);
 
-        $request->validate([
-            'posisi' => 'required|string',
-            'nama_perusahaan' => 'required|string',
-            'tempat_kerja' => 'required|string',
-            'tipe_pekerjaan' => 'required|in:full-time,part-time',
-            'gaji' => 'required|integer',
-            'deskripsi_pekerjaan' => 'required|string',
-            'requirements' => 'required|string'
+        $data = $request->validate([
+            'posisi'             => 'required|string|max:255',
+            'nama_perusahaan'    => 'required|string|max:255',
+            'tempat_kerja'       => 'required|string|max:255',
+            'tipe_pekerjaan'     => 'required|in:full_time,part_time',
+            'gaji'               => 'nullable|numeric',
+            'deskripsi_pekerjaan'=> 'required|string',
+            'requirements'       => 'required|string',
+            'expired_at'         => 'nullable|date',
         ]);
 
-        $job = Job::create([
-            'hrd_id' => auth()->id(),
-            'posisi' => $request->posisi,
-            'nama_perusahaan' => $request->nama_perusahaan,
-            'tempat_kerja' => $request->tempat_kerja,
-            'tipe_pekerjaan' => $request->tipe_pekerjaan,
-            'gaji' => $request->gaji,
-            'deskripsi_pekerjaan' => $request->deskripsi_pekerjaan,
-            'requirements' => $request->requirements
-        ]);
+        $data['hrd_id'] = auth()->id();
+        $job = Job::create($data);
 
-        return response()->json($job);
+        return redirect()->route('jobs.index')
+                         ->with('success', 'Job created successfully.');
     }
 
     public function update(Request $request, Job $job)
     {
         $this->authorize('update', $job);
 
-        $job->update($request->all());
-        return response()->json(['message' => 'Job updated successfully']);
+        $data = $request->validate([
+            'posisi'             => 'required|string|max:255',
+            'nama_perusahaan'    => 'required|string|max:255',
+            'tempat_kerja'       => 'required|string|max:255',
+            'tipe_pekerjaan'     => 'required|in:full_time,part_time',
+            'gaji'               => 'nullable|numeric',
+            'deskripsi_pekerjaan'=> 'required|string',
+            'requirements'       => 'required|string',
+            'expired_at'         => 'nullable|date',
+            'status'             => 'nullable|boolean',
+        ]);
+
+        $job->update($data);
+
+        return redirect()->route('jobs.index')
+                         ->with('success', 'Job updated successfully.');
     }
 
     public function destroy(Job $job)
     {
         $this->authorize('delete', $job);
         $job->delete();
-        return response()->json(['message' => 'Job deleted successfully']);
+        return redirect()->route('jobs.index')
+                         ->with('success', 'Job deleted successfully.');
     }
 }

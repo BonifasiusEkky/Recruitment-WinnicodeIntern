@@ -37,6 +37,11 @@
             <h2 class="text-center fw-bold mb-4">Login</h2>
 
             <!-- Tampilkan pesan error jika ada -->
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul class="mb-0">
@@ -51,11 +56,17 @@
                 @csrf
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="text" class="form-control" id="email" name="email" placeholder="Type your username">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Type your email" value="{{ old('email') }}" required>
+                    @error('email')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Type your password">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Type your password" required>
+                    @error('password')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
                 </div>
                 <div class="mb-3 text-start">
                     <a href="{{ route('register') }}" class="text-primary">Sign Up ?</a>

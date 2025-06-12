@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - CompanyJob</title>
+    <title>History Job - CompanyJob</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -83,6 +83,22 @@
             font-weight: bold;
             margin-bottom: 20px;
         }
+        .job-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .job-table th, .job-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .job-table th {
+            background-color: #f8f9fa;
+        }
+        .job-table .btn {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -92,16 +108,34 @@
         <div class="sidebar">
             @include('partials.sidebar-profile')
         </div>
-        <!-- Profile Details -->
+        <!-- History Job -->
         <div class="profile-card flex-grow-1">
-            <div class="profile-info">
-                <h3 class="fw-bold">Profile</h3>
+            <div class="main-content">
+                <h3 class="fw-bold">History Job</h3>
                 <hr>
-                <div class="mb-2"><span>Name</span> <br> {{ auth()->user()->name ?? 'Not specified' }}</div>
-                <div class="mb-2"><span>Gender</span> <br> {{ auth()->user()->profile->gender ?? 'Not specified' }}</div>
-                <div class="mb-2"><span>Date of Birth</span> <br> {{ auth()->user()->profile->tanggal_lahir ?? 'Not specified' }}</div>
-                <div class="mb-2"><span>Address</span> <br> {{ auth()->user()->profile->alamat ?? 'Not specified' }}</div>
-                <a href="{{ route('profile.edit') }}" class="btn btn-primary custom-btn mt-3">Edit</a>
+                @if ($applications->isEmpty())
+                    <p class="text-center">Tidak ada riwayat lamaran.</p>
+                @else
+                    <table class="job-table">
+                        <thead>
+                            <tr>
+                                <th>Posisi</th>
+                                <th>Perusahaan</th>
+                                <th>Status</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($applications as $application)
+                                <tr>
+                                    <td>{{ $application->job->posisi ?? 'Tidak ada data' }}</td>
+                                    <td>{{ $application->job->nama_perusahaan ?? 'Tidak ada data' }}</td>
+                                    <td>{{ $application->status ?? 'Tidak ada status' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
             </div>
         </div>
     </div>
