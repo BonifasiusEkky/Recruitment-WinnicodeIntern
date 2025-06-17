@@ -55,13 +55,13 @@ class JobController extends Controller
 
     public function edit(Job $job)
     {
-        $this->authorize('update', $job);
+        // authorize dihapus
         return view('hrd.jobs.edit', compact('job'));
     }
 
     public function update(Request $request, Job $job)
     {
-        $this->authorize('update', $job);
+        // authorize dihapus
 
         $validated = $request->validate([
             'posisi'              => 'required|string|max:255',
@@ -82,11 +82,15 @@ class JobController extends Controller
 
     public function destroy(Job $job)
     {
-        $this->authorize('delete', $job);
+        // authorize dihapus
         $job->delete();
 
         return redirect()
             ->route('hrd.jobs.index')
             ->with('success', 'Job berhasil dihapus.');
+    }
+    public function show(Job $job)
+    {
+        return view('hrd.jobs.show', compact('job'));
     }
 }

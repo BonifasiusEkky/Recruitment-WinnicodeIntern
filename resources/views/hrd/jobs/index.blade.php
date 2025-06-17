@@ -63,7 +63,7 @@
                     <td>{{ optional($job->expired_at)->format('Y-m-d') ?? '-' }}</td>
                     <td>{{ $job->status ? 'Active' : 'Inactive' }}</td>
                     <td>
-                      <a href="{{ route('hrd.jobs.edit', $job) }}" class="btn btn-success btn-xs" title="Detail">
+                      <a href="{{ route('hrd.jobs.show', $job) }}" class="btn btn-success btn-xs" title="Detail">
                         <i class="fas fa-eye"></i>
                       </a>
                       <a href="{{ route('hrd.jobs.edit', $job) }}" class="btn btn-info btn-xs" title="Edit">

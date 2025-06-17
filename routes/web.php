@@ -79,11 +79,12 @@ Route::middleware(['auth', 'hrd'])
 
         // Job management (uses HrdJob)
         Route::resource('jobs', HrdJob::class)
-            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
+            ->only(['index', 'create', 'store', 'edit','show', 'update', 'destroy'])
             ->names([
                 'index'   => 'jobs.index',
                 'create'  => 'jobs.create',
                 'store'   => 'jobs.store',
+                'show'    => 'jobs.show',
                 'edit'    => 'jobs.edit',
                 'update'  => 'jobs.update',
                 'destroy' => 'jobs.destroy',
