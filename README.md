@@ -29,8 +29,6 @@ CompanyJob adalah sebuah **portal lowongan kerja** yang memudahkan perusahaan un
 ### Backend:
 - **Laravel 8** (Framework PHP)
 - **MySQL** (Basis Data)
-- **Laravel Blade** (Templating Engine)
-- **Bootstrap 5** (Frontend Framework)
 
 ### Frontend:
 - **HTML**, **CSS**, **JavaScript**
